@@ -44,5 +44,5 @@ Computational analysis of genomic viral sequences has the potential to inform pu
 	* `ncr-bdsir-signal.R`: R script for plotting some of estimated parameters from the BDSIR model comparing the prior to the posterior.
 	* `ncr-bdsir-signal.png`: Output from the `ncr-bdsir-signal.R`.
 	* `loglist.txt`: List of log file (posterior only).
-	* `ncr-bdsir-traj.R`: R script for plotting the SIR trajectories from the BDSIR model.
+	* `ncr-bdsir-traj.R`: R script for plotting the SIR trajectories from the BDSIR model. Large part of this script was adapted form the work of Kühnert et al (2014).
 	* `ncr-bdsir-traj.png`: Output from the `ncr-bdsir-traj.R`.
