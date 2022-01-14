@@ -75,7 +75,6 @@ geom_split_violin <- function(mapping = NULL, data = NULL, stat = "ydensity", po
 # Plot violin plot
 p <- ggplot(data_tidy, aes(x=interval, y=rep, fill=distribution)) + geom_split_violin() +
   theme_classic() +
-  xlab("Date") +
   ylab("Effective Reproductive Number") +
   scale_y_continuous(breaks = seq(0, 10, by = 1), limits = c(0,10)) +
   scale_fill_manual(values=c("darkblue", "8c8c8c")) +
@@ -83,7 +82,7 @@ p <- ggplot(data_tidy, aes(x=interval, y=rep, fill=distribution)) + geom_split_v
   theme(legend.position="top", legend.box = "horizontal", legend.title = element_blank(),
         text = element_text(size=15),
         axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0)))
+        axis.title.x = element_blank())
 
 # Save Plot
 ggsave(plot = p,

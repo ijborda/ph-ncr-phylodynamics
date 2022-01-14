@@ -36,8 +36,7 @@ p <- ggplot(data = data) +
   scale_x_date(date_breaks = "1 month", 
                labels=date_format("%b-%Y")) +
   geom_ribbon(data = data, aes(x=as.Date(date, "%m/%d/%y"), ymin=lower, ymax=upper), fill="dark blue", alpha=0.4) +
-  theme(panel.background = element_rect(fill = 'whitesmoke'), 
-        axis.text.x = element_text(angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
         text = element_text(size=15),
         axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0))) +
