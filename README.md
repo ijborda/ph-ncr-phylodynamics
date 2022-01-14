@@ -28,6 +28,13 @@ Computational analysis of genomic viral sequences has the potential to inform pu
 	* `ncr-coalsky.csv`: Raw Ne estimates from the log file extracted using the Tracer tool.
 	* `ncr-coalsky.R`: R script for plotting the Ne estimates.
 	* `ncr-coalsky.png`: Output of the R script. This is the Ne plot. 
+* `bdsky`: Contains BEAST xml file, R scripts, and outputs associated with the birth-deat skyline (BDSKY) model.
+	* `ncr-bdsky-time-post.xml`: BEAST xml file for running the BDSKY model (posterior) for estimating the R<sub>e</sub> through time. The output of this is the `ncr-bdsky-time-post.log`. The corresponding prior run involves the xml file `ncr-bdsky-time-prior.xml` and its output is `ncr-bdsky-time-prior.log`.
+	* `ncr-bdsky-time.R`: R script for plotting R<sub>e</sub> through time. The output is `ncr-bdsky-time.png`.
+	* `ncr-bdsky-int-post.xml`: BEAST xml file for running the BDSKY model (posterior) for estimating the R<sub>e</sub> in relation to community quanrantine measures. The output of this is the `ncr-bdsky-int-post.log`. The corresponding prior runs involves the `ncr-bdsky-int-prior.xml` xml file and its output is `ncr-bdsky-int-prior.log`.
+	* `ncr-bdsky-int.R`: R script for plotting R<sub>e</sub> in relation to community quanrantine measures. The output is `ncr-bdsky-int.png`.
+	* `ncr-bdsky-maj-post.xml`: BEAST xml file for running the BDSKY model (posterior) for estimating the date of major change in R<sub>e</sub>. The output of this is the `ncr-bdsky-maj-post.log`. The corresponding prior runs involves the xml file `ncr-bdsky-maj-prior.xml` and its output is `ncr-bdsky-maj-prior.log`.
+	* `ncr-bdsky-maj.R`: R script for plotting R<sub>e</sub> before and after the date of its major change. The output is `ncr-bdsky-maj.png`.
 * `bdsir`: Contains BEAST xml file, R scripts, and outputs associated with the birth-death SIR (BDSIR) model. 
 	* `ncr-bdsir-post.xml`: BEAST xml file for running the BDSIR model (posterior).
 	* `ncr-bdsir-post.log`: Output from the BEAST analysis using `ncr-bdsir-post.xml`.
