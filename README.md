@@ -11,8 +11,14 @@
 	* `ncr-global.treefile`: ML tree which includes the NCR and global samples.
 * `temporal-signal`: Contains the scripts and output files for calculating the temporal signal and plotting the corresponding root-to-tip divergence plot.
 	* `ncr.treefile`: ML tree of the NCR samples using IQTree.
-	* `genetic-distance`: Datafile from TempEst which contains the genetic distance, dates, and residuals of the sequences.
+	* `genetic-distance.csv`: Datafile from TempEst which contains the genetic distance, dates, and residuals of the sequences.
 	* `p-value.R`: Calculates the p-value of the root-to-stip regression. Also uses the function in `temsignalfunctions.R` and the R scripts inside the `functions` folder. These scripts were adapted from the work of Murray et al.
 	* `p-value.RData`: Oytput from the `p-value.R`.
 	* `regression-plot.R`: Plots the root-to-tip regression.
 	* `temporal-signal.png`: Output from the `regression-plot.R`.
+* `coalsky`: Contains BEAST xml file, R scripts, and outputs associated with the coalescent model. 
+	* `ncr-coalsky.xml`: BEAST xml file for running the the coalescent skyline model.
+	* `ncr-coalsky.log`: Output from the BEAST analysis.
+	* `ncr-coalsky.csv`: Raw Ne estimates from the log file extracted using the Tracer tool.
+	* `ncr-coalsky.R`: R script for plotting the Ne estimates.
+	* `ncr-coalsky.png`: Output of the R script. This is the Ne plot. 
