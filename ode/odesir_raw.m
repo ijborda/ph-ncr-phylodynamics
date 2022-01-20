@@ -5,9 +5,9 @@
 rng(3453)
 
 % Number of simulation
-simNumber = 100;
+simNumber = 2;
 
-% Parameter limits
+% Parameter limits  
 BETA_LIM = 4;
 GAMMA_LIM = 4;
 
@@ -50,16 +50,14 @@ ylim([0 BETA_LIM]);
 
 figure();
 
-% Graph infected trajectory against NCR cases using parameters with least error 
-[errorSort, errorInd] = sort(reshape(sim.error,[],1), 1, 'ascend'); 
+% Graph infected trajectory against NCR cases using parameters with least error
+[errorSort, errorInd] = sort(reshape(sim.error,[],1), 1, 'ascend');  
 par.beta = sim.beta(errorInd(1));
 par.gamma = sim.gamma(errorInd(1));
 out = ode_sir(par);
 plot(out.T, out.Y(:,2), out.Trep, out.Yest, 'o', out.Trep, out.Yobs);
 legend({'Model (model)','Infected (projected)','Infected (reported)'},'Location','best');
-title(sprintf('Projected vs. Reported \n (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, sim.error(errorInd(1))));
-
-figure();
+title(sprintf('Projected vs. Reported (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, sim.error(errorInd(1))));
 
 function error = ode_sir_error(p)
 % Returns error value in the SIR projection given beta and gamma
@@ -83,9 +81,8 @@ function out = ode_sir(par)
     dat = readtable("ncr-reported.xlsx");
 
     % Initial conditions (in terms of proportion)
-    popN_raw = 7e6;
-    popN = 1;                               
-    I0 = mean(dat.reported(1:5))/popN_raw;       
+    popN = 7e6;                           
+    I0 = mean(dat.reported(1:5));       
     x0 = [popN-I0 I0 0];
 
     % Define the timespan (in days)
@@ -100,7 +97,6 @@ function out = ode_sir(par)
     [out.T, out.Y] = ode15s(@model, timeDomain, x0, options);
 
     % Calculates SIR in terms of raw values (not proportion)
-    out.Y = popN_raw*out.Y;
     out.Trep = caldays(between(dat.date(1), dat.date, 'Days'));
     out.Yest = interp1(out.T, out.Y(:,2), out.Trep);
     out.Sus = interp1(out.T, out.Y(:,1), out.Trep);
@@ -118,7 +114,7 @@ function out = ode_sir(par)
         popI = x(2); 
 
         % Declare equation terms
-        infection = par.beta*popI*popS; 
+        infection = par.beta*popI*popS/popN; 
         removal = par.gamma*popI;
         dx = zeros(3,1);
         dx(1) = -infection;

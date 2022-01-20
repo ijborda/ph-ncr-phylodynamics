@@ -50,16 +50,25 @@ ylim([0 BETA_LIM]);
 
 figure();
 
-% Graph infected trajectory against NCR cases using parameters with least error 
+% Sort error from least to highest error 
 [errorSort, errorInd] = sort(reshape(sim.error,[],1), 1, 'ascend'); 
+
+
+% Boxplot for best 10 r
+boxplot(sim.r(errorInd(1:10)));
+title('Best fitting Basic Reproductive Numbers (Top 10)');
+ytickformat('%,.2f');
+ylim([0 BETA_LIM]);
+
+figure();
+
+% Graph infected trajectory against NCR cases using parameters with least error 
 par.beta = sim.beta(errorInd(1));
 par.gamma = sim.gamma(errorInd(1));
 out = ode_sir(par);
 plot(out.T, out.Y(:,2), out.Trep, out.Yest, 'o', out.Trep, out.Yobs);
 legend({'Model (model)','Infected (projected)','Infected (reported)'},'Location','best');
 title(sprintf('Projected vs. Reported \n (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, sim.error(errorInd(1))));
-
-figure();
 
 function error = ode_sir_error(p)
 % Returns error value in the SIR projection given beta and gamma
