@@ -71,6 +71,13 @@ boxplot(min_param(:,3))
 title('R-naught of the top 10 Parameter Estimates with Minimum Error')
 ylabel('R0')
 
+% Graph infected trajectory against NCR cases using parameters with least error 
+par.beta = min_param(1,1);
+par.gamma = min_param(1,2);
+out = ode_sir(par);
+plot(out.T, out.Y(:,2), out.Trep, out.Yest, 'o', out.Trep, out.Yobs);
+legend({'Model (model)','Infected (projected)','Infected (reported)'},'Location','best');
+title(sprintf('Projected vs. Reported \n (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, min_param(1,4)));
 
 function out = ode_sir(par)
 % ode_sir calculates the SIR projections using the given parameters
