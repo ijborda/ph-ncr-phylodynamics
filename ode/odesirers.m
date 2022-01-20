@@ -19,12 +19,15 @@ error = zeros(RES);
 rnaught = zeros(RES);
 
 % Calculate error and rnaught
+iter = 1;
 for i = 1:RES
     for j = 1:RES
+        fprintf('Iteration: %d\n', iter);    %for monitoring of progress
         par.beta = beta(i);
         par.gamma = gamma(j);
         error(i,j)= ode_sir(par).fitMeasure;
         rnaught(i,j) = par.beta / par.gamma;
+        iter = iter + 1;
     end
 end
 
