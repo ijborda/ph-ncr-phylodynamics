@@ -2,7 +2,7 @@
 % values of beta and gamma. Uses odeBDSIR function to calculate the error.
 
 % Resolution of the error space (1000 by 1000)
-RES = 4;
+RES = 1000;
 
 % Limit of beta and gamma
 PAR_LIMIT = 1;
