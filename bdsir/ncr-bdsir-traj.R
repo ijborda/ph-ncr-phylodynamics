@@ -113,15 +113,19 @@ squish_trans <- function(from, to, factor) {
   return(trans_new("squished", trans, inv))
 }
 
+# Transform data to long format
+df.long <- df %>% gather(comp, value, -c(t))
+df.long$comp[df.long$comp == "S"] <- "Suscepptible"
+df.long$comp[df.long$comp == "I"] <- "Infected"
+df.long$comp[df.long$comp == "R"] <- "Removed"
+df.long$comp_f = factor(df.long$comp, levels=c('Suscepptible','Infected','Removed'))
+
 # Plot
-p <- ggplot(data = df) +
-  geom_line(aes(x=t,y=S, color = "Susceptibles"), size = 1.25) +
-  geom_line(aes(x=t,y=I, color = "Infected"), size = 1.25) +
-  geom_line(aes(x=t,y=R, color = "Removed"), size = 1.25) +
-  theme_bw() +
-  scale_colour_manual("", 
-                      breaks = c("Susceptibles", "Infected", "Removed"),
-                      values = c("dark blue", "dark red", "dark green")) +
+p <- ggplot(data = df.long) +
+  geom_line(aes(x=t, y=value), size = 1.25) +
+  guides(color=FALSE) +
+  facet_grid(comp_f~., scales="free_y") +
+  theme_classic() +
   labs(x="Date", y="Number of Individuals") +
   theme(panel.background = element_rect(fill = 'whitesmoke'), 
         legend.position = "top",
@@ -131,10 +135,8 @@ p <- ggplot(data = df) +
         axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0))) +
   scale_x_date(date_breaks = "1 month", 
                labels=date_format("%b-%Y")) +
-  scale_y_continuous(label = comma,
-                     trans = squish_trans(300000, 6500000, 100),
-                     breaks = seq(0, 7200000, by = 100000)) 
-  
+  scale_y_continuous(label = comma)
+
 # Save Plot
 ggsave(plot = p,
        filename = "ncr-bdsir-traj.png",
