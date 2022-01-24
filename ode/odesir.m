@@ -1,128 +1,86 @@
-% This script find the beta and gamma that best fits the NCR reported 
-% cases using the classical SIR model
+% This plots the error space of the function within the pre-specified 
+% values of beta and gamma. Uses odeBDSIR function to calculate the error.
 
-% Define random seed
-rng(3453)
+% Resolution of the error space (1000 by 1000)
+RES = 5;
 
-% Number of simulation
-simNumber = 100;
+% Limit of beta and gamma
+PAR_LIMIT = 1;
 
-% Parameter limits
-BETA_LIM = 4;
-GAMMA_LIM = 4;
+% Top number of parameters to obtain
+TOP = 10;
 
-for i = 1:simNumber
-  % Initialize random initial beta and gamma
-  initialBeta = BETA_LIM * rand; 
-  initialGamma = GAMMA_LIM * rand;
- 
-  % Find best fitting gamma and beta
-  options = optimset ('TolFun', 1e-50, 'TolX', 1e-50, 'MaxFunEvals', 1e100);
-  [bestPar, bestError] = fminsearch(@ode_sir_error, [initialBeta initialGamma], options);
-  
-  % Store simulation result
-  sim.initialBeta(i) = initialBeta;   
-  sim.initialGamma(i) = initialGamma;   
-  sim.beta(i) = bestPar(1);       
-  sim.gamma(i) = bestPar(2);           
-  sim.r(i) = bestPar(1) / bestPar(2); 
-  sim.error(i) = bestError;  
+% Generate beta and gamma in the error space
+beta = linspace(0, PAR_LIMIT, RES);
+gamma = beta;
+
+% Empty vector for error and rnaught
+error = zeros(RES);
+rnaught = zeros(RES);
+
+% Calculate error and rnaught
+iter = 1;
+for i = 1:RES
+    for j = 1:RES
+        fprintf('Iteration: %d\n', iter);    %for monitoring of progress
+        par.beta = beta(i);
+        par.gamma = gamma(j);
+        error(i,j)= odesir_model(par).fitMeasure;
+        rnaught(i,j) = par.beta / par.gamma;
+        iter = iter + 1;
+    end
 end
 
+% Plots the error surface
+error = log(error);
+surf(beta, gamma, error)
+colorbar
+caxis([0 1000])
+shading flat
+title('Error Space of Deterministic SIR model')
+xlabel('beta')
+ylabel('gamma')
+zlabel('log(error)')
 
-% Plot best fitting beta and gamma
-scatter(sim.beta, sim.gamma, 100, '.');
-xlim([0 BETA_LIM]);
-ylim([0 GAMMA_LIM]);
-title(sprintf('Best fitting Beta and Gamma (simNumber = %i)', simNumber));
-xlabel('Beta');
-ylabel('Gamma');
-xtickformat('%,.2f');
-ytickformat('%,.2f');
+% Obtain the top 10 parameters with minimum error
+[errorSort, errorInd] = sort(error(:), 1, 'ascend');        %sorts errors from lowest to highest
+min_errors = errorSort(1:TOP);                              %obtains the 10 lowest errors
+[ind_row, ind_col] = ind2sub(size(error), errorInd(1:TOP)); %fetch indices of the 10 lowest errors
 
-figure();
+% Stores best parameters and the corresponding r-naught and error to one matrix
+min_param = zeros(TOP, 4);
+for i = 1:TOP
+        min_param(i,1) = beta(ind_row(i));
+        min_param(i,2) = gamma(ind_col(i));
+        min_param(i,3) = min_param(i,1) / min_param(i,2);
+        min_param(i,4) = min_errors(i);
+end
 
-% Boxplot for best r
-boxplot(sim.r);
-title(sprintf('Best fitting Basic Reproductive Numbers (simNumber = %i)', simNumber));
-ytickformat('%,.2f');
-ylim([0 BETA_LIM]);
+% Plot top 10 beta
+boxplot(min_param(:,1))
+title('Beta of the top 10 Parameter Estimates with Minimum Error')
+ylabel('Beta')
 
-figure();
+figure ();
+
+% Plot top 10 gamma
+boxplot(min_param(:,2))
+title('Gamma of the top 10 Parameter Estimates with Minimum Error')
+ylabel('Gamma')
+
+figure ();
+
+% Plot top 10 r-naught
+boxplot(min_param(:,3))
+title('R-naught of the top 10 Parameter Estimates with Minimum Error')
+ylabel('R0')
+
+figure ();
 
 % Graph infected trajectory against NCR cases using parameters with least error 
-[errorSort, errorInd] = sort(reshape(sim.error,[],1), 1, 'ascend'); 
-par.beta = sim.beta(errorInd(1));
-par.gamma = sim.gamma(errorInd(1));
-out = ode_sir(par);
+par.beta = min_param(1,1);
+par.gamma = min_param(1,2);
+out = odesir_model(par);
 plot(out.T, out.Y(:,2), out.Trep, out.Yest, 'o', out.Trep, out.Yobs);
 legend({'Model (model)','Infected (projected)','Infected (reported)'},'Location','best');
-title(sprintf('Projected vs. Reported \n (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, sim.error(errorInd(1))));
-
-figure();
-
-function error = ode_sir_error(p)
-% Returns error value in the SIR projection given beta and gamma
-
-    % Returns very large value if beta or gamma is negative     
-    if sum(p < 0) > 0
-        error = 1e6;
-
-    % Otherwise, calculates error using ode_sir function 
-    else
-        par.beta = p(1);
-        par.gamma = p(2);
-        error = ode_sir(par).fitMeasure;
-    end
-end
-
-function out = ode_sir(par)
-% ode_sir calculates the SIR projections using the given parameters
-
-    % Read the NCR reported case data
-    dat = readtable("ncr-reported.xlsx");
-
-    % Initial conditions (in terms of proportion)
-    popN_raw = 7e6;
-    popN = 1;                               
-    I0 = mean(dat.reported(1:5))/popN_raw;       
-    x0 = [popN-I0 I0 0];
-
-    % Define the timespan (in days)
-    tspan = caldays(between(dat.date(1), dat.date(end), 'Days')); 
-    timeDomain = [0 tspan];
-
-    % Simulate the SIR projections
-    options = odeset( ...
-        'RelTol',1e-10, ...     % High accuracy
-        'AbsTol',1e-10 ...      % Consider solutions very close to zero
-        );
-    [out.T, out.Y] = ode15s(@model, timeDomain, x0, options);
-
-    % Calculates SIR in terms of raw values (not proportion)
-    out.Y = popN_raw*out.Y;
-    out.Trep = caldays(between(dat.date(1), dat.date, 'Days'));
-    out.Yest = interp1(out.T, out.Y(:,2), out.Trep);
-    out.Sus = interp1(out.T, out.Y(:,1), out.Trep);
-    out.Rec = interp1(out.T, out.Y(:,3), out.Trep);
-    out.Yobs = dat.reported;
-
-    % Calculates the error value
-    out.fitMeasure = sqrt(mean((out.Yobs - out.Yest).^2));
-    
-    function dx = model(~,x)
-    % model defines the SIR model
-
-        % Input state values
-        popS = x(1);
-        popI = x(2); 
-
-        % Declare equation terms
-        infection = par.beta*popI*popS; 
-        removal = par.gamma*popI;
-        dx = zeros(3,1);
-        dx(1) = -infection;
-        dx(2) = infection - removal;
-        dx(3) = removal;
-    end
-end
+title(sprintf('Projected vs. Reported \n (Beta = %.4f, Gamma = %.4f, R0 = %.2f, Error = %.2f)', par.beta, par.gamma, par.beta / par.gamma, min_param(1,4)));
