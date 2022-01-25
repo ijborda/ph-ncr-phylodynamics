@@ -41,31 +41,48 @@ df.pri.rep <- df.pri[,c("reproductiveNumberEs")]
 df.rep <- data.frame(df.pos.rep,df.pri.rep)
 colnames(df.rep) <- c("posterior", "prior")
 
+# Transform origin datafram to dates
+latest.sample = ymd("2021-07-18")
+df.ori$posterior = latest.sample - df.ori$posterior*365 
+df.ori$prior = latest.sample - df.ori$prior*365
+
 # Plot graphs
 sam <- ggplot(data=df.sam) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "a. Sampling Proportion")
+  labs(x = " ", y = "Marginal Density", title = "a. Sampling Proportion") +
+  geom_vline(data=df.sam, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
 
 uni <- ggplot(data=df.uni) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "b. Become Uninfectious Rate")
+  labs(x = " ", y = "Marginal Density", title = "b. Become Uninfectious Rate") +
+  geom_vline(data=df.uni, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
 
 ori <- ggplot(data=df.ori) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "c. Origin")
+  labs(x = " ", y = "Marginal Density", title = "c. Origin") +
+  scale_x_date(date_breaks = "2 month", labels=date_format("%b-%Y")) + 
+  geom_vline(data=df.ori, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.ori, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.ori, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
 
 rep <- ggplot(data=df.rep) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "d. Reproductive Number")
-
+  labs(x = " ", y = "Marginal Density", title = "d. Reproductive Number") +
+  geom_vline(data=df.rep, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
 
 all <- plot_grid(sam, uni, ori, rep, ncol=2,align="v")
 
