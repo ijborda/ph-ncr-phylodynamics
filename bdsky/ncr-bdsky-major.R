@@ -39,6 +39,7 @@ data_tidy$distribution <- ifelse(grepl("post",data_tidy$condition),'Posterior','
 data_tidy$interval <- ""
 data_tidy$interval <- ifelse(grepl("first",data_tidy$condition),'Before major change in Re', data_tidy$interval)
 data_tidy$interval <- ifelse(grepl("second",data_tidy$condition),'After major change in Re', data_tidy$interval)
+data_tidy$interval <- factor(data_tidy$interval, levels = c('Before major change in Re','After major change in Re'), ordered = TRUE)
 
 # Define function for splitting violion plots, source: https://stackoverflow.com/questions/35717353/split-violin-plot-with-ggplot2
 GeomSplitViolin <- ggproto("GeomSplitViolin", GeomViolin, 
