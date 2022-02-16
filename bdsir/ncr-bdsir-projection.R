@@ -46,6 +46,12 @@ sde <- sde %>%
 models <- read.delim(file = "ncr-bdsir-ode-projection.csv" , sep = ',', header = TRUE)
 sde$date <- models$date;
 
+# Load reported data
+reported <- read.delim(file = "ncr-reported-projection-data.csv" , sep = ',', header = TRUE)
+
+# Define scale multiplier
+mult <- 400;
+
 # Plot models
 p <- ggplot() +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=Y.1, colour = "Stochastic SIR",), size = 1.0, alpha = 1) +
@@ -61,22 +67,33 @@ p <- ggplot() +
   geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=genomic, colour = "Deterministic SIR"), size = 1.0) +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=median, colour = "Stochastic SIR (median)"), size = 1.0) +
   geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=reported, colour = "Deterministic SIR (using reported data)"), size = 1.0) +
+  geom_col(reported, mapping = aes(x=as.Date(date, format="%d-%b-%y") , y=reported*mult, fill = "Reported data")) +
   theme_classic() +
-  theme(axis.text.x = element_text(hjust = 1),
-        text = element_text(size=15),
-        axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
-        axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0))) +
-  labs(x="Date", y="Number of Infected Individuals") +
+  labs(x="Date", y="Number of Projected Cases") +
   scale_x_date(date_breaks = "3 month", 
                labels=date_format("%b-%Y")) +
-  scale_colour_manual("", 
-                      breaks = c("Deterministic SIR", "Stochastic SIR (median)", "Stochastic SIR", "Deterministic SIR (using reported data)"),
-                      values = c("dark blue", "dark green", "gray70", "dark red")) +
+  scale_colour_manual(" ",
+                      values = c("Deterministic SIR" = "dark blue", 
+                                 "Stochastic SIR (median)" = "dark green", 
+                                 "Stochastic SIR" = "gray70", 
+                                 "Deterministic SIR (using reported data)" = "dark red"))  +
+  scale_fill_manual("",values=alpha("orange",0.5)) + 
   theme(legend.position = "top") +
-  scale_y_continuous(label = comma) +
-  geom_vline(xintercept = as.Date("9/5/20", format="%m/%d/%y"), linetype = 4, color="black")
+  geom_vline(xintercept = as.Date("9/5/20", format="%m/%d/%y"), linetype = 4, color="black") +
+  theme(axis.text.x = element_text(hjust = 1),
+        text = element_text(size=15),
+        axis.title.y.left = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
+        axis.title.y.right = element_text(margin = margin(t = 0, r = 0, b = 0, l = 15)),
+        axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0)),
+        legend.key=element_blank()) +
+  scale_y_continuous(label = comma,
+                     sec.axis=sec_axis(~.*1/mult,name="Number of Reported Cases")) +
+  annotate("rect", xmin = as.Date("7/18/20", format="%m/%d/%y"), xmax = as.Date("3/8/22", format="%m/%d/%y"), 
+           ymin = 0, ymax = 2800000,
+           alpha = .2) +
+  annotate("text", x = as.Date("1/8/22", format="%m/%d/%y"), y = 2600000, label = "Projection")
 
 # Save plot
 ggsave(plot = p,
        filename = "ncr-bdsir-projection.png",
-       width = 11, height = 5, units = "in", dpi = 300)
+       width = 13, height = 5, units = "in", dpi = 300)
