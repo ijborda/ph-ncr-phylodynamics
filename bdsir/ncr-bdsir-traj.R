@@ -9,6 +9,7 @@ library(cowplot)
 library(s20x)
 library(boa)
 library(ggforce)
+library(data.table)
 
 # Compute time and SIR
 colnameindex = function(M , colname0) 
@@ -18,7 +19,7 @@ theindex = which(colsnames==colname0);
 return(theindex); 
 }
 loglist = read.table("loglist.txt", as.is=TRUE, header=F) #list of log filename(s)
-finalSampleTime = 2020.57377 # time of most recent sample, please edit!
+finalSampleTime = 2020.546448 # time of most recent sample (18 July 2020)
 dim =length(loglist[,1])
 intervals=101
 for(i in 1:dim){
@@ -141,3 +142,14 @@ p <- ggplot(data = df.long) +
 ggsave(plot = p,
        filename = "ncr-bdsir-traj.png",
        width = 8, height = 5, units = "in", dpi = 300)
+
+# Get infected values
+df.infected <- subset(df.long, comp == "Infected")
+df.infected$comp_f <- NULL
+df.infected$comp <- NULL
+colnames(df.infected) <- c("bdsir_date", "bdsir_infected")
+df.infected <- subset(df.infected, bdsir_date >= as.Date("2020-03-01"))
+
+# Save infected values 
+fwrite(df.infected, "ncr-bdsir-infected.csv", na = "NA") 
+

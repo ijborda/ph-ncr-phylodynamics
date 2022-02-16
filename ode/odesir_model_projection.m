@@ -9,16 +9,16 @@ function out = odesir_model(par, graph)
     end
 
     % Read the NCR reported case data
-    bdsir = readtable("ncr-bdsir-infected.csv");
+    sir = readtable("ncr-reported.xlsx");
 
     % Interpolate values
-    dat.date = datetime(2020,03,02,0,0,0):datetime(2020,7,17,0,0,0);
-    dat.bdsir = interp1(bdsir.bdsir_date', bdsir.bdsir_infected', dat.date);
+    dat.date = datetime(2020,03,01,0,0,0):datetime(2020,7,18,0,0,0);
+    dat.reported = interp1(sir.date', sir.reported', dat.date);
 
     % Initial conditions (in terms of proportion)
     popN_raw = 7e6;
     popN = 1;                               
-    I0 = mean(dat.bdsir(1:5))/popN_raw;       
+    I0 = mean(dat.reported(1:5))/popN_raw;       
     x0 = [popN-I0 I0 0];
 
     % Define the timespan (in days)
@@ -42,7 +42,7 @@ function out = odesir_model(par, graph)
     out.Yest = interp1(out.T, out.Y(:,2), out.Trep);
     out.Sus = interp1(out.T, out.Y(:,1), out.Trep);
     out.Rec = interp1(out.T, out.Y(:,3), out.Trep);
-    out.Yobs = dat.bdsir;
+    out.Yobs = dat.reported;
 
     % Calculates the error value
     if graph == 1 % Do not include projected values in calculating error for graphing

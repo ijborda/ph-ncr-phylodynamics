@@ -1,5 +1,5 @@
-% This script find the beta and gamma that best fits the NCR reported 
-% cases using the classical SIR model
+% This script find the beta and gamma that best fits the 
+% estimates from the BDSIR model
 
 % Define random seed
 rng(3453);

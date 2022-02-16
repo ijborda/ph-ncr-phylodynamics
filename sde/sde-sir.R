@@ -80,4 +80,4 @@ p <- ggplot() +
 # Save plot
 ggsave(plot = p,
        filename = "models.png",
-       width = 7, height = 5, units = "in", dpi = 300)
+       width = 8, height = 5, units = "in", dpi = 300)

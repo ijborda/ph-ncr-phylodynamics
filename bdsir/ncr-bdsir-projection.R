@@ -11,7 +11,7 @@ library(cowplot)
 # Set the model
 pomp(
   data=data.frame(
-    time=seq(0,447,by=1),
+    time=seq(0,737,by=1),
     reports=NA
   ),
   times="time",t0=0,
@@ -28,8 +28,8 @@ pomp(
   paramnames=c("rho","mu","Beta","gamma"),
   statenames=c("N","X","Y","Z","cases"),
   accumvars=c("cases"),
-  params=c(X.0=6999970.8, Y.0=29.2, Z.0=0, N.0=7000000, cases.0=0,
-           mu=0, Beta=0.1109, gamma=0.0479, rho=0.5)
+  params=c(X.0=6999988.2, Y.0=11.8, Z.0=0, N.0=7000000, cases.0=0,
+           mu=0, Beta=0.1062, gamma=0.0284, rho=0.5)
 ) -> sir
 
 # Produce simulations
@@ -43,7 +43,7 @@ sde <- sde %>%
   mutate(median = median(c(Y.1, Y.2, Y.3, Y.4, Y.5, Y.6, Y.7, Y.8, Y.9, Y.10), na.rm = TRUE))
 
 # Load simulation results from other models
-models <- read.delim(file = "ncr-bdsir-projection.csv" , sep = ',', header = TRUE)
+models <- read.delim(file = "ncr-bdsir-ode-projection.csv" , sep = ',', header = TRUE)
 sde$date <- models$date;
 
 # Plot models
@@ -58,8 +58,9 @@ p <- ggplot() +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=Y.8), color = "gray70", size = 1.0, alpha = 1) +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=Y.9), color = "gray70", size = 1.0, alpha = 1) +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=Y.10), color = "gray70", size = 1.0, alpha = 1) +
-  geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=infected, colour = "Deterministic SIR"), size = 1.0) +
+  geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=genomic, colour = "Deterministic SIR"), size = 1.0) +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=median, colour = "Stochastic SIR (median)"), size = 1.0) +
+  geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=reported, colour = "Deterministic SIR (using reported data)"), size = 1.0) +
   theme_classic() +
   theme(axis.text.x = element_text(hjust = 1),
         text = element_text(size=15),
@@ -69,12 +70,13 @@ p <- ggplot() +
   scale_x_date(date_breaks = "3 month", 
                labels=date_format("%b-%Y")) +
   scale_colour_manual("", 
-                      breaks = c("Deterministic SIR", "Stochastic SIR (median)", "Stochastic SIR"),
-                      values = c("dark blue", "dark green", "gray70")) +
+                      breaks = c("Deterministic SIR", "Stochastic SIR (median)", "Stochastic SIR", "Deterministic SIR (using reported data)"),
+                      values = c("dark blue", "dark green", "gray70", "dark red")) +
   theme(legend.position = "top") +
-  scale_y_continuous(label = comma)
+  scale_y_continuous(label = comma) +
+  geom_vline(xintercept = as.Date("9/5/20", format="%m/%d/%y"), linetype = 4, color="black")
 
 # Save plot
 ggsave(plot = p,
        filename = "ncr-bdsir-projection.png",
-       width = 7, height = 5, units = "in", dpi = 300)
+       width = 11, height = 5, units = "in", dpi = 300)
