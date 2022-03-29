@@ -80,12 +80,14 @@ p <- ggplot() +
   scale_fill_manual("",values=alpha("orange",0.5)) + 
   theme(legend.position = "top") +
   geom_vline(xintercept = as.Date("9/5/20", format="%m/%d/%y"), linetype = 4, color="black") +
-  theme(axis.text.x = element_text(hjust = 1),
-        text = element_text(size=15),
+  theme(text = element_text(size=15),
         axis.title.y.left = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
         axis.title.y.right = element_text(margin = margin(t = 0, r = 0, b = 0, l = 15)),
         axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0)),
-        legend.key=element_blank()) +
+        legend.key=element_blank(),
+        axis.ticks.y.right = element_line(color = "orange"),
+        axis.line.y.right = element_line(color = "orange"),
+        axis.text.y.right = element_text(colour = "orange")) +
   scale_y_continuous(label = comma,
                      sec.axis=sec_axis(~.*1/mult,name="Number of Reported Cases")) +
   annotate("rect", xmin = as.Date("7/18/20", format="%m/%d/%y"), xmax = as.Date("3/8/22", format="%m/%d/%y"), 
