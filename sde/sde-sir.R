@@ -64,8 +64,7 @@ p <- ggplot() +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=median, colour = "Stochastic SIR (median)"), size = 1.0) +
   scale_y_log10() +
   theme_classic() +
-  theme(axis.text.x = element_text(hjust = 1),
-        text = element_text(size=15),
+  theme(text = element_text(size=15),
         axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
         axis.title.x = element_text(margin = margin(t = 15, r = 0, b = 0, l = 0))) +
   labs(x="Date", y="Number of Infected Individuals") +
