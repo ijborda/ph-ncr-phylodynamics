@@ -47,24 +47,6 @@ df.ori$posterior = latest.sample - df.ori$posterior*365
 df.ori$prior = latest.sample - df.ori$prior*365
 
 # Plot graphs
-sam <- ggplot(data=df.sam) +
-  geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
-  geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
-  theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "Sampling Proportion") +
-  geom_vline(data=df.sam, aes(xintercept=mean(posterior)),  colour="dark blue") +
-  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
-  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
-
-uni <- ggplot(data=df.uni) +
-  geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
-  geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
-  theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "Become Uninfectious Rate") +
-  geom_vline(data=df.uni, aes(xintercept=mean(posterior)),  colour="dark blue") +
-  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
-  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
-
 ori <- ggplot(data=df.ori) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
@@ -84,7 +66,25 @@ rep <- ggplot(data=df.rep) +
   geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
   geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
 
-all <- plot_grid(sam, uni, ori, rep, ncol=2,align="v",
+uni <- ggplot(data=df.uni) +
+  geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
+  geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
+  theme_classic() +
+  labs(x = " ", y = "Marginal Density", title = "Become Uninfectious Rate") +
+  geom_vline(data=df.uni, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.uni, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
+
+sam <- ggplot(data=df.sam) +
+  geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
+  geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
+  theme_classic() +
+  labs(x = " ", y = "Marginal Density", title = "Sampling Proportion") +
+  geom_vline(data=df.sam, aes(xintercept=mean(posterior)),  colour="dark blue") +
+  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
+  geom_vline(data=df.sam, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
+
+all <- plot_grid(ori, rep, uni, sam, ncol=2,align="v",
                  labels = c('A', 'B', 'C', 'D'))
 
 ggsave(plot = all,
