@@ -51,7 +51,7 @@ ori <- ggplot(data=df.ori) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "Origin") +
+  labs(x = " ", y = "Marginal Density", title = "Date of Origin") +
   scale_x_date(date_breaks = "2 month", labels=date_format("%b-%Y")) + 
   geom_vline(data=df.ori, aes(xintercept=mean(posterior)),  colour="dark blue") +
   geom_vline(data=df.ori, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
@@ -61,7 +61,7 @@ rep <- ggplot(data=df.rep) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="blue", alpha=.3) +
   geom_density(aes(x=prior,y=..density..), size=1, color='black', linetype="dashed") +
   theme_classic() +
-  labs(x = " ", y = "Marginal Density", title = "Reproductive Number") +
+  labs(x = " ", y = "Marginal Density", title = "Basic Reproductive Number") +
   geom_vline(data=df.rep, aes(xintercept=mean(posterior)),  colour="dark blue") +
   geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.05, type = 1)), colour="dark blue", linetype="dashed") +
   geom_vline(data=df.rep, aes(xintercept=quantile(posterior, 0.95, type = 1)), colour="dark blue", linetype="dashed")
