@@ -90,6 +90,12 @@ p <- ggplot(data_tidy, aes(x=interval, y=rep, fill=distribution)) + geom_split_v
         axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
         axis.title.x = element_blank())
 
+# Kolmogorov-Smirnov test
+pval_none <- ks.test(data_tidy[data_tidy$condition == "None.prior", ]$rep, data_tidy[data_tidy$condition == "None.post", ]$rep)
+pval_ecq  <- ks.test(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep,  data_tidy[data_tidy$condition == "ECQ.post", ]$rep)
+pval_mecq <- ks.test(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep, data_tidy[data_tidy$condition == "MECQ.post", ]$rep)
+pval_gcq  <- ks.test(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep,  data_tidy[data_tidy$condition == "GCQ.post", ]$rep)
+
 # Save plot
 ggsave(plot = p,
        filename = "ncr-bdsky-int.png",
