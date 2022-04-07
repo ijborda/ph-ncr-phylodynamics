@@ -9,6 +9,8 @@ library(forcats)
 library(hrbrthemes)
 library(viridis)
 library(see)
+library(gridExtra)
+library(cowplot)
 
 # Read log files
 df.post = readLog(filename = "ncr-bdsky-major-post.log", 
@@ -85,7 +87,53 @@ p <- ggplot(data_tidy, aes(x=interval, y=rep, fill=distribution)) + geom_split_v
         axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
         axis.title.x = element_blank())
 
+# Put error bars
+first.prior.mid = median(data_tidy[data_tidy$condition == "first.prior", ]$rep)
+first.prior.bot = quantile(data_tidy[data_tidy$condition == "first.prior", ]$rep, 0.05)
+first.prior.top = quantile(data_tidy[data_tidy$condition == "first.prior", ]$rep, 0.95)
+first.post.mid = median(data_tidy[data_tidy$condition == "first.post", ]$rep)
+first.post.bot = quantile(data_tidy[data_tidy$condition == "first.post", ]$rep, 0.05)
+first.post.top = quantile(data_tidy[data_tidy$condition == "first.post", ]$rep, 0.95)
+
+second.prior.mid = median(data_tidy[data_tidy$condition == "second.prior", ]$rep)
+second.prior.bot = quantile(data_tidy[data_tidy$condition == "second.prior", ]$rep, 0.05)
+second.prior.top = quantile(data_tidy[data_tidy$condition == "second.prior", ]$rep, 0.95)
+second.post.mid = median(data_tidy[data_tidy$condition == "second.post", ]$rep)
+second.post.bot = quantile(data_tidy[data_tidy$condition == "second.post", ]$rep, 0.05)
+second.post.top = quantile(data_tidy[data_tidy$condition == "second.post", ]$rep, 0.95)
+
+p <- p + annotate("pointrange", x = 1.05, y = first.prior.mid, ymin = first.prior.bot, ymax = first.prior.top,
+                  colour = "green", size = .5) + 
+         annotate("pointrange", x = 0.95, y = first.post.mid, ymin = first.post.bot, ymax = first.post.top,
+                  colour = "green", size = .5) +
+         annotate("pointrange", x = 2.05, y = second.prior.mid, ymin = second.prior.bot, ymax = second.prior.top,
+                  colour = "green", size = .5) + 
+         annotate("pointrange", x = 1.95, y = second.post.mid, ymin = second.post.bot, ymax = second.post.top,
+                  colour = "green", size = .5) 
+
+# Plot major change distribution
+df.pos.maj <- date_decimal(df.post[,c("reproductiveNumberChangeDate")])
+df.pri.maj <- date_decimal(df.prior[,c("reproductiveNumberChangeDate")])
+df.maj <- data.frame(as.Date(df.pos.maj, format = "%d-%m-%Y"), as.Date(df.pri.maj, format = "%d-%m-%Y"))
+colnames(df.maj) <- c("posterior", "prior")
+maj <- ggplot(data=df.maj) +
+  geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="darkblue") +
+  geom_density(aes(x=prior,y=..density..), size=1, color=FALSE, fill="8c8c8c") +
+  theme_classic() +
+  labs(x = "Date of Major Change", y = "Marginal Density") +
+  scale_x_date(date_breaks = "2 month", labels=date_format("%b-%Y")) + 
+  theme(legend.position="top", legend.box = "horizontal", legend.title = element_blank(),
+        text = element_text(size=15),
+        axis.title.y = element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
+        axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))) +
+  annotate("pointrange", y = 0.0005, x = as.Date(median(df.pri.maj)), xmin = as.Date(quantile((df.pri.maj), 0.05)), xmax = as.Date(quantile((df.pri.maj), 0.95)),
+           colour = "green", size = .5) + 
+  annotate("pointrange", y = 0.0030, x = as.Date(median(df.pos.maj)), xmin = as.Date(quantile((df.pos.maj), 0.05)), xmax = as.Date(quantile((df.pos.maj), 0.95)),
+           colour = "green", size = .5) 
+
+all <- plot_grid(p, maj, ncol=2,align="v")
+
 # Save Plot
-ggsave(plot = p,
+ggsave(plot = all,
        filename = "ncr-bdsky-major.png",
-       width = 7, height = 5, units = "in", dpi = 300)
+       width = 14, height = 5, units = "in", dpi = 300)

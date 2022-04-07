@@ -96,6 +96,52 @@ pval_ecq  <- ks.test(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep,  data_
 pval_mecq <- ks.test(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep, data_tidy[data_tidy$condition == "MECQ.post", ]$rep)
 pval_gcq  <- ks.test(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep,  data_tidy[data_tidy$condition == "GCQ.post", ]$rep)
 
+# Put error bars
+none.prior.mid = median(data_tidy[data_tidy$condition == "None.prior", ]$rep)
+none.prior.bot = quantile(data_tidy[data_tidy$condition == "None.prior", ]$rep, 0.05)
+none.prior.top = quantile(data_tidy[data_tidy$condition == "None.prior", ]$rep, 0.95)
+none.post.mid = median(data_tidy[data_tidy$condition == "None.post", ]$rep)
+none.post.bot = quantile(data_tidy[data_tidy$condition == "None.post", ]$rep, 0.05)
+none.post.top = quantile(data_tidy[data_tidy$condition == "None.post", ]$rep, 0.95)
+
+ecq.prior.mid = median(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep)
+ecq.prior.bot = quantile(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep, 0.05)
+ecq.prior.top = quantile(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep, 0.95)
+ecq.post.mid = median(data_tidy[data_tidy$condition == "ECQ.post", ]$rep)
+ecq.post.bot = quantile(data_tidy[data_tidy$condition == "ECQ.post", ]$rep, 0.05)
+ecq.post.top = quantile(data_tidy[data_tidy$condition == "ECQ.post", ]$rep, 0.95)
+
+mecq.prior.mid = median(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep)
+mecq.prior.bot = quantile(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep, 0.05)
+mecq.prior.top = quantile(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep, 0.95)
+mecq.post.mid = median(data_tidy[data_tidy$condition == "MECQ.post", ]$rep)
+mecq.post.bot = quantile(data_tidy[data_tidy$condition == "MECQ.post", ]$rep, 0.05)
+mecq.post.top = quantile(data_tidy[data_tidy$condition == "MECQ.post", ]$rep, 0.95)
+
+gcq.prior.mid = median(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep)
+gcq.prior.bot = quantile(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep, 0.05)
+gcq.prior.top = quantile(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep, 0.95)
+gcq.post.mid = median(data_tidy[data_tidy$condition == "GCQ.post", ]$rep)
+gcq.post.bot = quantile(data_tidy[data_tidy$condition == "GCQ.post", ]$rep, 0.05)
+gcq.post.top = quantile(data_tidy[data_tidy$condition == "GCQ.post", ]$rep, 0.95)
+
+p <- p + annotate("pointrange", x = 1.05, y = none.prior.mid, ymin = none.prior.bot, ymax = none.prior.top,
+             colour = "green", size = .5) + 
+         annotate("pointrange", x = 0.95, y = none.post.mid, ymin = none.post.bot, ymax = none.post.top,
+                colour = "green", size = .5) +
+         annotate("pointrange", x = 2.05, y = ecq.prior.mid, ymin = ecq.prior.bot, ymax = ecq.prior.top,
+                  colour = "green", size = .5) + 
+         annotate("pointrange", x = 1.95, y = ecq.post.mid, ymin = ecq.post.bot, ymax = ecq.post.top,
+                colour = "green", size = .5) +
+         annotate("pointrange", x = 3.05, y = mecq.prior.mid, ymin = mecq.prior.bot, ymax = mecq.prior.top,
+                  colour = "green", size = .5) + 
+         annotate("pointrange", x = 2.95, y = mecq.post.mid, ymin = mecq.post.bot, ymax = mecq.post.top,
+                colour = "green", size = .5) +
+         annotate("pointrange", x = 4.05, y = gcq.prior.mid, ymin = gcq.prior.bot, ymax = gcq.prior.top,
+                  colour = "green", size = .5) + 
+         annotate("pointrange", x = 3.95, y = gcq.post.mid, ymin = gcq.post.bot, ymax = gcq.post.top,
+                colour = "green", size = .5)
+
 # Save plot
 ggsave(plot = p,
        filename = "ncr-bdsky-int.png",
