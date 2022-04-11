@@ -87,6 +87,12 @@ sam <- ggplot(data=df.sam) +
 all <- plot_grid(ori, rep, uni, sam, ncol=2,align="v",
                  labels = c('A', 'B', 'C', 'D'))
 
+# Kolmogorov-Smirnov test
+pval_ori <- ks.test(as.numeric(df.ori$posterior), as.numeric(df.ori$prior)) #p-value<2.2e-16
+pval_rep <- ks.test(as.numeric(df.rep$posterior), as.numeric(df.rep$prior)) #p-value<2.2e-16
+pval_uni <- ks.test(as.numeric(df.uni$posterior), as.numeric(df.uni$prior)) #p-value<2.2e-16
+pval_sam <- ks.test(as.numeric(df.sam$posterior), as.numeric(df.sam$prior)) #p-value<2.2e-16
+
 ggsave(plot = all,
        filename = "ncr-bdsir-signal.png",
        width = 7, height = 5, units = "in", dpi = 300)
