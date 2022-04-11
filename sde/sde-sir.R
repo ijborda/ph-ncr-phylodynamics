@@ -7,6 +7,7 @@ library(lubridate)
 library(scales)
 library(gridExtra)
 library(cowplot)
+library(imputeTS)
 
 # Set the model
 pomp(
@@ -75,6 +76,21 @@ p <- ggplot() +
                       breaks = c("Deterministic SIR", "Stochastic SIR (median)", "BDSIR", "Stochastic SIR"),
                       values = c("dark blue", "dark green", "dark red", "gray70")) +
   theme(legend.position = "top")
+
+# Slope/Relative Growth Rate
+bdsirOde <- data.frame(models$bdsir_date, models$bdsir)
+bdsirOde <- bdsirOde[!apply(is.na(bdsirOde) | bdsirOde == "", 1, all),]
+colnames(bdsirOde) <- c("date", "bdsir")
+bdsirOde$date <- as.Date(bdsirOde$date, format="%m/%d/%y")
+bdsirOde <- bdsirOde[as.Date(bdsirOde[["date"]]) <= as.Date('2020-07-18'), ]
+bdsirOde <- bdsirOde[as.Date(bdsirOde[["date"]]) >= as.Date('2020-03-01'), ]
+bdsirOde <- bdsirOde %>%
+  complete(date = seq.Date(as.Date('2020-03-01'), as.Date('2020-07-18'), by = "day"))
+bdsirOde <- na_interpolation(bdsirOde, option = "linear")
+bdsirOde$date <- 1:140
+bdsirOde$ode <- models$ode
+lm(log(bdsirOde$bdsir) ~ bdsirOde$date) #0.07971
+lm(formula = log(bdsirOde$ode) ~ bdsirOde$date) #0.02802 
 
 # Save plot
 ggsave(plot = p,
