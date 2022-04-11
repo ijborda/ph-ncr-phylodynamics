@@ -120,7 +120,7 @@ maj <- ggplot(data=df.maj) +
   geom_density(aes(x=posterior,y=..density..), color=FALSE , fill="darkblue") +
   geom_density(aes(x=prior,y=..density..), size=1, color=FALSE, fill="8c8c8c") +
   theme_classic() +
-  labs(x = "Date of Major Change", y = "Marginal Density") +
+  labs(x = "Date of Major Change in Effective Reproductive Number", y = "Marginal Density") +
   scale_x_date(date_breaks = "2 month", labels=date_format("%b-%Y")) + 
   theme(legend.position="top", legend.box = "horizontal", legend.title = element_blank(),
         text = element_text(size=15),
