@@ -92,9 +92,13 @@ p <- ggplot(data_tidy, aes(x=interval, y=rep, fill=distribution)) + geom_split_v
 
 # Kolmogorov-Smirnov test
 pval_none <- ks.test(data_tidy[data_tidy$condition == "None.prior", ]$rep, data_tidy[data_tidy$condition == "None.post", ]$rep)
+# p-value < 2.2e-16
 pval_ecq  <- ks.test(data_tidy[data_tidy$condition == "ECQ.prior", ]$rep,  data_tidy[data_tidy$condition == "ECQ.post", ]$rep)
+# p-value < 2.2e-16
 pval_mecq <- ks.test(data_tidy[data_tidy$condition == "MECQ.prior", ]$rep, data_tidy[data_tidy$condition == "MECQ.post", ]$rep)
+#p-value = 0.0215
 pval_gcq  <- ks.test(data_tidy[data_tidy$condition == "GCQ.prior", ]$rep,  data_tidy[data_tidy$condition == "GCQ.post", ]$rep)
+#p-value < 2.2e-16%
 
 # Put error bars
 none.prior.mid = median(data_tidy[data_tidy$condition == "None.prior", ]$rep)
