@@ -131,9 +131,15 @@ maj <- ggplot(data=df.maj) +
   annotate("pointrange", y = 0.0030, x = as.Date(median(df.pos.maj)), xmin = as.Date(quantile((df.pos.maj), 0.05)), xmax = as.Date(quantile((df.pos.maj), 0.95)),
            colour = "green", size = .5) 
 
-all <- plot_grid(p, maj, ncol=2,align="v")
+#all <- plot_grid(p, maj, ncol=2,align="v")
 
 # Save Plot
-ggsave(plot = all,
-       filename = "ncr-bdsky-major.png",
-       width = 14, height = 5, units = "in", dpi = 300)
+ggsave(plot = p,
+       filename = "ncr-bdsky-major-re.png",
+       width = 7, height = 5, units = "in", dpi = 300)
+
+
+# Save Plot
+ggsave(plot = maj,
+       filename = "ncr-bdsky-major-date.png",
+       width = 7, height = 5, units = "in", dpi = 300)
