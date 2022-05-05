@@ -11,7 +11,7 @@ r <- read.csv("odesir-minparam.csv")
 
 # Plot R0
 beta <- ggplot(r, aes(y = Beta)) + 
-  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4) +
+  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4, fatten = NULL) +
   scale_y_continuous(breaks = seq(0.06, 0.12, by = .01),
                      limits=c(0.06, 0.12)) +
   theme_classic() +
@@ -20,11 +20,12 @@ beta <- ggplot(r, aes(y = Beta)) +
         axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
-        plot.title = element_text(size=15)) +
+        plot.title = element_text(size=15)) + 
+  annotate('segment', x = -0.35, xend = 0.35, y = 0.08908909, yend = 0.08908909, color = "black") +
   labs(y=expression(paste("Effective Transmission Rate (", beta, ")")))
 
 gamma <- ggplot(r, aes(y = Gamma)) + 
-  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4) +
+  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4, fatten = NULL) +
   scale_y_continuous(breaks = seq(0.03, 0.09, by = .01),
                      limits=c(0.03, 0.09)) +
   theme_classic() +
@@ -34,10 +35,11 @@ gamma <- ggplot(r, aes(y = Gamma)) +
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.title = element_text(size=15)) +
+  annotate('segment', x = -0.35, xend = 0.35, y = 0.06106106, yend = 0.06106106, color = "black") +
   labs(y=expression(paste("Removal Rate (", gamma, ")")))
 
 rnaught <- ggplot(r, aes(y = R0)) + 
-  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4) +
+  geom_boxplot(coef=3, fill="dark blue", alpha = 0.4, fatten = NULL) +
   scale_y_continuous(breaks = seq(1.3, 1.7, by = .05),
                      limits=c(1.3, 1.7)) +
   theme_classic() +
@@ -47,10 +49,11 @@ rnaught <- ggplot(r, aes(y = R0)) +
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         plot.title = element_text(size=15)) +
+  annotate('segment', x = -0.35, xend = 0.35, y = 1.459016, yend = 1.459016, color = "black") +
   labs(y=expression(paste("Basic Reproductive Number (", R[0], ")")))
  
 title <- ggdraw() + 
-  draw_label("Epidemiological Parameter Estimates from the SIR model", x = 0, hjust = 0) +
+  draw_label("Epidemiological Parameter Estimates from the Deterministic SIR\nmodel using Reported Data", x = 0, hjust = 0) +
   theme( plot.margin = margin(0, 0, 0, 7))
 all <- plot_grid(beta, gamma, rnaught, ncol=3, align="v",
                  labels = c('A', 'B', 'C'),
