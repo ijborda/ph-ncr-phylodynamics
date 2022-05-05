@@ -42,7 +42,7 @@ df.rep <- data.frame(df.pos.rep,df.pri.rep)
 colnames(df.rep) <- c("posterior", "prior")
 
 # Transform origin datafram to dates
-latest.sample = ymd("2021-07-18")
+latest.sample = ymd("2020-07-18")
 df.ori$posterior = latest.sample - df.ori$posterior*365 
 df.ori$prior = latest.sample - df.ori$prior*365
 
