@@ -52,6 +52,26 @@ reported <- read.delim(file = "ncr-reported-projection-data.csv" , sep = ',', he
 # Define scale multiplier
 mult <- 400;
 
+# Plot fit of reported to SIR during sampling period
+fit <- ggplot() +
+  geom_col(reported, mapping = aes(x=as.Date(date, format="%d-%b-%y") , y=reported, fill = "Reported Data")) +
+  geom_line(models, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=reported, colour = "Deterministic SIR (using reported data)"), size = 1.0) +
+  scale_x_date(date_breaks = "1 month", 
+               labels=date_format("%b-%Y"),
+               limits = as.Date(c('2020-03-01','2020-07-31'))) +
+  scale_y_continuous(limits = c(0, 2500)) +
+  scale_colour_manual(" ",
+                      values = c("Deterministic SIR (using reported data)" = "dark red")) +
+  scale_fill_manual("",values=alpha("orange",0.5)) + 
+  theme_classic() +
+  labs(x="Date", y="Number of Cases") +
+  theme(legend.position = "top")
+
+# Save plot
+ggsave(plot = fit,
+       filename = "data-fitting.png",
+       width = 7, height = 5, units = "in", dpi = 300)
+
 # Plot models
 p <- ggplot() +
   geom_line(sde, mapping = aes(x=as.Date(date,format="%m/%d/%y"), y=Y.1, colour = "Stochastic SIR",), size = 1.0, alpha = 1) +
